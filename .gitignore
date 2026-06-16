@@ -1,0 +1,58 @@
+## .NET
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+.vs/
+.vscode/
+*.binlog
+project.lock.json
+project.fragment.lock.json
+artifacts/
+TestResults/
+coverage*.json
+coverage*.xml
+*.coverage
+*.trx
+
+## Rider / JetBrains
+.idea/
+*.DotSettings.user
+
+## MAUI / mobile
+*.keystore
+*.jks
+*.mobileprovision
+*.p12
+
+## Node / frontend
+node_modules/
+dist/
+dist-server/
+npm-debug.log
+yarn-error.log
+wwwroot/dist/
+
+## Secrets & local config (NUNCA versionar — ver SECURITY.md)
+appsettings.*.local.json
+appsettings.Secrets.json
+.env
+.env.*
+secrets.*.json
+*.pfx
+*.pem
+serviceAccountKey.json
+firebase-*.json
+
+## OS
+.DS_Store
+Thumbs.db

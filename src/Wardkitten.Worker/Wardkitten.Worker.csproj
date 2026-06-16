@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <RootNamespace>Wardkitten.Worker</RootNamespace>
+    <UserSecretsId>dotnet-Wardkitten.Worker-b9e57e42-f9a7-4d65-9042-a31e0bc58b58</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wardkitten.Application\Wardkitten.Application.csproj" />
+    <ProjectReference Include="..\Wardkitten.Infrastructure\Wardkitten.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,17 @@
+# Normaliza a CRLF todo el código versionado (convención de la casa, ver AGENTS.md)
+* text=auto eol=crlf
+
+# Binarios: sin conversión
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.zip binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.snk binary
+*.keystore binary

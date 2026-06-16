@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="nuget.config" />
+    <File Path="Directory.Build.props" />
+    <File Path="AGENTS.md" />
+    <File Path="CLAUDE.md" />
+    <File Path="SECURITY.md" />
+    <File Path="README.md" />
+    <File Path="docker-compose.yml" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/Wardkitten.Domain/Wardkitten.Domain.csproj" />
+    <Project Path="src/Wardkitten.Shared.Contracts/Wardkitten.Shared.Contracts.csproj" />
+    <Project Path="src/Wardkitten.Application/Wardkitten.Application.csproj" />
+    <Project Path="src/Wardkitten.Infrastructure/Wardkitten.Infrastructure.csproj" />
+    <Project Path="src/Wardkitten.Api/Wardkitten.Api.csproj" />
+    <Project Path="src/Wardkitten.Worker/Wardkitten.Worker.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Wardkitten.Tests/Wardkitten.Tests.csproj" />
+  </Folder>
+</Solution>

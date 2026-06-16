@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Wardkitten.Shared.Contracts</RootNamespace>
+  </PropertyGroup>
+
+</Project>

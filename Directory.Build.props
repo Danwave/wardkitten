@@ -1,0 +1,21 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework Condition="'$(TargetFrameworks)' == ''">net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Deterministic>true</Deterministic>
+    <LangVersion>latest</LangVersion>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <ManagePackageVersionsCentrally>false</ManagePackageVersionsCentrally>
+    <!-- El repo acumula warnings de terceros; no romper el build por ellos. -->
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Supresión PRECISA por ID de advisory (no por código NU1902 genérico). -->
+    <!-- GHSA-6c8g-7p36-r338: zip-slip en SharpCompress.WriteToDirectory, sin fix upstream y NO
+         explotable en Wardkitten (no extraemos archivos a disco; SharpCompress es transitiva de
+         MongoDB.Driver). Revisar al actualizar el driver. Ver tech-debt.md y SECURITY.md. -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-6c8g-7p36-r338" />
+  </ItemGroup>
+</Project>
