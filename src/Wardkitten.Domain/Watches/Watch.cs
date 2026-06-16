@@ -44,6 +44,10 @@ public sealed class Watch : Entity
     /// <summary>Incidente abierto actualmente (garantiza idempotencia de alertas). Null si está OK.</summary>
     public string? CurrentIncidentId { get; set; }
 
+    /// <summary>Racha actual de check-ins en plazo (gamificación). Feature: F10.01.</summary>
+    public int CurrentStreak { get; set; }
+    public int BestStreak { get; set; }
+
     // ---- Lógica de dominio (pura, testeable) ----
 
     /// <summary>Deadline efectivo = próximo vencimiento + gracia.</summary>
@@ -72,13 +76,19 @@ public sealed class Watch : Entity
     {
         LastCheckInAtUtc = nowUtc;
         ConsecutiveMisses = 0;
+        CurrentStreak++;
+        if (CurrentStreak > BestStreak) BestStreak = CurrentStreak;
         Status = WatchStatus.Up;
         CurrentIncidentId = null;
         ScheduleNextFrom(nowUtc);
     }
 
-    /// <summary>Contabiliza un incumplimiento (un ciclo perdido).</summary>
-    public void RegisterMiss() => ConsecutiveMisses++;
+    /// <summary>Contabiliza un incumplimiento (un ciclo perdido). Rompe la racha en plazo.</summary>
+    public void RegisterMiss()
+    {
+        ConsecutiveMisses++;
+        CurrentStreak = 0;
+    }
 
     public void Pause()
     {

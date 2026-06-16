@@ -31,6 +31,8 @@ public sealed record WatchDto(
     List<string> Tags,
     string? ProjectId,
     string? CurrentIncidentId,
+    int CurrentStreak,
+    int BestStreak,
     DateTime CreatedAtUtc);
 
 public sealed record CheckInDto(string Id, string Kind, string Source, DateTime ReceivedAtUtc, int? DurationMs);

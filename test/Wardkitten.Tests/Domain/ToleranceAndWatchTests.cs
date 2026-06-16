@@ -37,6 +37,8 @@ public class ToleranceAndWatchTests
         watch.CurrentIncidentId.ShouldBeNull();
         watch.LastCheckInAtUtc.ShouldBe(now);
         watch.NextDueAtUtc.ShouldBe(now.AddHours(1));
+        watch.CurrentStreak.ShouldBe(1);
+        watch.BestStreak.ShouldBe(1);
     }
 
     [Fact]

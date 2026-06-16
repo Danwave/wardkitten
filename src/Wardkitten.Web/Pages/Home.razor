@@ -40,7 +40,13 @@ else
                         {
                             <p class="text-muted small mb-2">@w.Description</p>
                         }
-                        <p class="small mb-1">Próximo: <strong>@FormatDue(w.NextDueAtUtc)</strong></p>
+                        <p class="small mb-1">
+                            Próximo: <strong>@FormatDue(w.NextDueAtUtc)</strong>
+                            @if (w.CurrentStreak > 0)
+                            {
+                                <span class="ms-2" title="Racha en plazo">🔥 @w.CurrentStreak</span>
+                            }
+                        </p>
                         @if (w.Type == WatchType.Ping && !string.IsNullOrEmpty(w.PingToken))
                         {
                             <p class="small text-truncate"><code>@PingUrl(w.PingToken!)</code></p>
