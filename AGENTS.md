@@ -66,6 +66,8 @@ Web y worker corren en **Kubernetes (Linux)**; el desarrollo es en **Windows**. 
 
 ## Normas generales
 
+- **Sin IA.** Wardkitten no incorpora funcionalidades de inteligencia artificial: no añadas dependencias
+  de LLM/modelos ni servicios de IA. Las ideas que impliquen IA quedan fuera de alcance (ver `ToDo.md`).
 - Mensajes de commit en **inglés**; descripciones de PR pueden ir en español. Si el commit afecta a una
   feature documentada, incluye su código: `feat(F02.01): add per-task channel bindings`.
 - No incluyas en commits archivos generados ni dependencias precompiladas, ni **secretos**.

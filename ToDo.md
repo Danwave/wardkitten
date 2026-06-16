@@ -15,13 +15,20 @@ Seguimiento de construcción por fases (ver plan aprobado). `[x]` hecho · `[ ]`
 - [x] **F8** K8S + Docker + CI
 - [x] **F9** Tests + docs/features
 
+## Decisiones de proyecto
+
+- **Sin IA.** Wardkitten **no** incorpora funcionalidades de inteligencia artificial. No añadir
+  dependencias de modelos/LLM ni servicios de IA. Cualquier idea que implique IA queda fuera de alcance.
+
 ## Pendientes funcionales (post-v1)
 
-- [ ] Status pages públicas/privadas
+- [x] Status pages públicas/privadas
+- [x] Gamificación / streaks (habit tracker)
+- [x] Plantillas de watch
+- [x] Integraciones salientes: Webhook / Slack / Discord (Microsoft Teams pendiente)
 - [ ] Equipos y guardias (on-call rotations)
-- [ ] Integraciones salientes (Slack/Discord/Teams, webhooks)
-- [ ] Creación de tareas por lenguaje natural (Claude API)
-- [ ] Gamificación / streaks (habit tracker)
-- [ ] Plantillas de watch
+- [ ] **Crear tareas con lenguaje natural** — *feature a futuro*. Permitir describir una tarea en texto
+  ("recuérdame regar cada 3 días") y derivar su schedule/tolerancia. Debe implementarse **sin IA**
+  (p. ej. parser de reglas/patrones deterministas) conforme a la decisión de proyecto; no usar LLM.
 - [ ] Build firmado iOS/Android + workload MAUI en CI
 - [ ] Plantillas WhatsApp aprobadas en Meta
