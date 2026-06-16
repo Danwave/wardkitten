@@ -1,4 +1,5 @@
 using Wardkitten.Application.DependencyInjection;
+using Wardkitten.Application.RealTime;
 using Wardkitten.Infrastructure.DependencyInjection;
 using Wardkitten.Worker;
 
@@ -8,6 +9,10 @@ var config = builder.Configuration;
 builder.Services.AddWardkittenApplication(config["PUBLIC_BASE_URL"]);
 builder.Services.AddWardkittenInfrastructure(config);
 builder.Services.AddWardkittenIntegrations(config);
+
+// Tiempo real: el worker publica eventos llamando al endpoint interno de la API (override del no-op).
+builder.Services.AddSingleton<IWatchEventPublisher, HttpWatchEventPublisher>();
+
 builder.Services.AddHostedService<EvaluationWorker>();
 
 var host = builder.Build();

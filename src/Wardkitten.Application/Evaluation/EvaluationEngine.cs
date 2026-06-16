@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Wardkitten.Application.Abstractions;
 using Wardkitten.Application.Abstractions.Persistence;
 using Wardkitten.Application.Notifications;
+using Wardkitten.Application.RealTime;
 using Wardkitten.Domain.Incidents;
 using Wardkitten.Domain.Watches;
 
@@ -19,6 +20,7 @@ public sealed class EvaluationEngine
     private readonly IWatchRepository _watches;
     private readonly IIncidentRepository _incidents;
     private readonly INotificationDispatcher _dispatcher;
+    private readonly IWatchEventPublisher _events;
     private readonly IClock _clock;
     private readonly ILogger<EvaluationEngine> _logger;
 
@@ -26,12 +28,14 @@ public sealed class EvaluationEngine
         IWatchRepository watches,
         IIncidentRepository incidents,
         INotificationDispatcher dispatcher,
+        IWatchEventPublisher events,
         IClock clock,
         ILogger<EvaluationEngine> logger)
     {
         _watches = watches;
         _incidents = incidents;
         _dispatcher = dispatcher;
+        _events = events;
         _clock = clock;
         _logger = logger;
     }
@@ -80,12 +84,16 @@ public sealed class EvaluationEngine
                 watch.CurrentIncidentId = incident.Id;
                 await _dispatcher.DispatchDueAsync(watch, incident, ct);
                 await _incidents.ReplaceAsync(incident, ct);
+                await _watches.ReplaceAsync(watch, ct);
+                await _events.IncidentOpenedAsync(incident, ct);
+                await _events.WatchUpdatedAsync(watch, ct);
             }
             else
             {
                 watch.Status = WatchStatus.Grace;
+                await _watches.ReplaceAsync(watch, ct);
+                await _events.WatchUpdatedAsync(watch, ct);
             }
-            await _watches.ReplaceAsync(watch, ct);
             return true;
         }
 
@@ -94,6 +102,7 @@ public sealed class EvaluationEngine
         {
             watch.Status = WatchStatus.Grace;
             await _watches.ReplaceAsync(watch, ct);
+            await _events.WatchUpdatedAsync(watch, ct);
             return true;
         }
 

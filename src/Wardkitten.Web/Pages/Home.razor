@@ -2,6 +2,7 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @inject WardkittenApiClient Api
 @inject NavigationManager Nav
+@inject LiveHubConnection Live
 @implements IDisposable
 
 <PageTitle>Panel · Wardkitten</PageTitle>
@@ -72,8 +73,16 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadAsync();
+        Live.OnChanged += HandleChanged;
+        await Live.StartAsync();           // tiempo real (SignalR); polling como fallback
         _cts = new CancellationTokenSource();
         _ = PollAsync(_cts.Token);
+    }
+
+    private async void HandleChanged()
+    {
+        await LoadAsync();
+        await InvokeAsync(StateHasChanged);
     }
 
     private async Task LoadAsync()
@@ -89,7 +98,7 @@ else
         {
             while (!ct.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(15), ct);
+                await Task.Delay(TimeSpan.FromSeconds(30), ct);
                 await LoadAsync();
                 await InvokeAsync(StateHasChanged);
             }
@@ -107,5 +116,9 @@ else
     private static string FormatDue(DateTime? dueUtc)
         => dueUtc is null ? "—" : dueUtc.Value.ToLocalTime().ToString("dd/MM HH:mm");
 
-    public void Dispose() => _cts?.Cancel();
+    public void Dispose()
+    {
+        Live.OnChanged -= HandleChanged;
+        _cts?.Cancel();
+    }
 }

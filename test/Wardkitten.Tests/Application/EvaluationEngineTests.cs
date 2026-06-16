@@ -4,6 +4,7 @@ using Shouldly;
 using Wardkitten.Application.Abstractions.Persistence;
 using Wardkitten.Application.Evaluation;
 using Wardkitten.Application.Notifications;
+using Wardkitten.Application.RealTime;
 using Wardkitten.Domain.Incidents;
 using Wardkitten.Domain.Watches;
 
@@ -14,7 +15,7 @@ public class EvaluationEngineTests
     private static readonly DateTime Now = new(2026, 6, 16, 12, 0, 0, DateTimeKind.Utc);
 
     private static EvaluationEngine Build(IWatchRepository watches, IIncidentRepository incidents, INotificationDispatcher dispatcher)
-        => new(watches, incidents, dispatcher, new TestClock(Now), Substitute.For<ILogger<EvaluationEngine>>());
+        => new(watches, incidents, dispatcher, new NoopWatchEventPublisher(), new TestClock(Now), Substitute.For<ILogger<EvaluationEngine>>());
 
     [Fact]
     public async Task BreachedWatch_OpensIncidentAndAlertsOnce()

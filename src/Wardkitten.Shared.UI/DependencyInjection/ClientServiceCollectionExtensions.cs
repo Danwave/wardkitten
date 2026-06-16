@@ -29,6 +29,7 @@ public static class ClientServiceCollectionExtensions
                 .AddHttpMessageHandler<BearerHandler>();
 
         services.AddScoped<ClientAuthService>();
+        services.AddScoped<LiveHubConnection>();
         return services;
     }
 }

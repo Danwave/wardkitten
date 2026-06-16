@@ -47,6 +47,7 @@ services:
       CORS_ORIGINS: "http://localhost:8080"
       JWT_SECRET: "dev-insecure-secret-change-me-please-0123456789"
       MAGICLINK_SECRET: "dev-insecure-magiclink-secret-0123456789"
+      INTERNAL_TOKEN: "dev-internal-token"
     depends_on:
       mongo:
         condition: service_healthy
@@ -63,6 +64,8 @@ services:
       PUBLIC_BASE_URL: "http://localhost:8080"
       MAGICLINK_SECRET: "dev-insecure-magiclink-secret-0123456789"
       POLLING_INTERVAL_SECONDS: "15"
+      API_INTERNAL_URL: "http://api:80"
+      INTERNAL_TOKEN: "dev-internal-token"
     depends_on:
       mongo:
         condition: service_healthy

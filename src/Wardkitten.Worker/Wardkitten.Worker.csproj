@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Wardkitten.Application\Wardkitten.Application.csproj" />
     <ProjectReference Include="..\Wardkitten.Infrastructure\Wardkitten.Infrastructure.csproj" />
+    <ProjectReference Include="..\Wardkitten.Shared.Contracts\Wardkitten.Shared.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

@@ -98,6 +98,7 @@ app.MapAuthEndpoints();
 app.MapWatchEndpoints();
 app.MapMoneyEndpoints();
 app.MapPublicEndpoints();
+app.MapInternalEndpoints();
 app.MapHub<WatchHub>("/hubs/watch");
 
 app.Run();
