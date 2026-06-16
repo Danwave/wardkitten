@@ -4,4 +4,9 @@
     <RootNamespace>Wardkitten.Shared.Contracts</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Los contratos reutilizan los value objects y enums del dominio para evitar mapeo redundante. -->
+    <ProjectReference Include="..\Wardkitten.Domain\Wardkitten.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

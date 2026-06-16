@@ -50,6 +50,15 @@ public sealed class CheckInService
         return Result.Ok();
     }
 
+    /// <summary>Registra éxito por watchId sin contexto de usuario (lo usa el magic link "Hecho", ya firmado).</summary>
+    public async Task<Result> RecordSuccessByWatchIdAsync(string watchId, CheckInSource source, CancellationToken ct = default)
+    {
+        var watch = await _watches.GetByIdAsync(watchId, ct);
+        if (watch is null) return Result.Fail("Watch no encontrado.");
+        await RecordAsync(watch, CheckInKind.Success, source, null, null, ct);
+        return Result.Ok();
+    }
+
     private async Task RecordAsync(Watch watch, CheckInKind kind, CheckInSource source, string? payload, string? ip, CancellationToken ct)
     {
         var now = _clock.UtcNow;
