@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wardkitten
+
+---
+# Configuración NO sensible. Las claves coinciden con las variables de entorno que lee la app.
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wardkitten-config
+  namespace: wardkitten
+data:
+  MONGOSETTINGS_DATABASENAME: "Wardkitten"
+  PUBLIC_BASE_URL: "https://app.wardkitten.com"
+  CORS_ORIGINS: "https://app.wardkitten.com"
+  JWT_ISSUER: "wardkitten"
+  JWT_AUDIENCE: "wardkitten"
+  JWT_ACCESS_MINUTES: "60"
+  POLLING_INTERVAL_SECONDS: "30"
+  SMTP_PORT: "587"
+  SMTP_FROM: "noreply@wardkitten.com"
+  SMTP_FROM_NAME: "Wardkitten"
+
+---
+# PLACEHOLDERS: los valores reales se aplican fuera de git (ver SECURITY.md). No commitear secretos.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wardkitten-secrets
+  namespace: wardkitten
+type: Opaque
+stringData:
+  MONGOSETTINGS_CONNECTION: "REPLACE_ME"
+  JWT_SECRET: "REPLACE_ME"
+  MAGICLINK_SECRET: "REPLACE_ME"
+  SMTP_HOST: ""
+  SMTP_USER: ""
+  SMTP_PASSWORD: ""
+  TELEGRAM_BOT_TOKEN: ""
+  FCM_SERVICE_ACCOUNT_JSON: ""
+  TWILIO_ACCOUNT_SID: ""
+  TWILIO_AUTH_TOKEN: ""
+  TWILIO_SMS_FROM: ""
+  TWILIO_WHATSAPP_FROM: ""
+  STRIPE_SECRET_KEY: ""
+  STRIPE_WEBHOOK_SECRET: ""
+  STRIPE_PRICE_PRO: ""
+  STRIPE_PRICE_TEAM: ""
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wardkitten
+  namespace: wardkitten
+  labels: { app: wardkitten, namespace: wardkitten }
+spec:
+  revisionHistoryLimit: 0
+  replicas: 2
+  selector:
+    matchLabels: { app: wardkitten }
+  template:
+    metadata:
+      name: wardkitten
+      namespace: wardkitten
+      labels: { app: wardkitten, namespace: wardkitten }
+    spec:
+      containers:
+        - name: wardkitten
+          image: ghcr.io/avanware/wardkitten:1
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          envFrom:
+            - configMapRef: { name: wardkitten-config }
+            - secretRef: { name: wardkitten-secrets }
+          livenessProbe:
+            httpGet: { scheme: HTTP, path: /health, port: 80 }
+            initialDelaySeconds: 30
+            periodSeconds: 60
+          readinessProbe:
+            httpGet: { scheme: HTTP, path: /health, port: 80 }
+            initialDelaySeconds: 15
+            periodSeconds: 30
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: avanware.ghcr.io
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: wardkitten
+  namespace: wardkitten
+  labels: { app: wardkitten }
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  selector: { app: wardkitten }
+  type: ClusterIP
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: wardkitten
+  namespace: wardkitten
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"   # websockets de SignalR
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: app.wardkitten.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: wardkitten-web, port: { number: 80 } }
+    - host: api.wardkitten.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service: { name: wardkitten, port: { number: 80 } }

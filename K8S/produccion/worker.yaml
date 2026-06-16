@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worker
+  namespace: wardkitten
+  labels: { app: worker, namespace: wardkitten }
+spec:
+  revisionHistoryLimit: 0
+  # Se pueden escalar réplicas: el leader election (lease en Mongo) garantiza que solo una evalúa.
+  replicas: 1
+  selector:
+    matchLabels: { app: worker }
+  template:
+    metadata:
+      name: worker
+      namespace: wardkitten
+      labels: { app: worker, namespace: wardkitten }
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/avanware/wardkitten-worker:1
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef: { name: wardkitten-config }
+            - secretRef: { name: wardkitten-secrets }
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: avanware.ghcr.io

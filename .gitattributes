@@ -1,6 +1,9 @@
 # Normaliza a CRLF todo el código versionado (convención de la casa, ver AGENTS.md)
 * text=auto eol=crlf
 
+# Excepción: los shell scripts ejecutados en Linux deben ir con LF (CRLF rompe el shebang)
+*.sh text eol=lf
+
 # Binarios: sin conversión
 *.png binary
 *.jpg binary
