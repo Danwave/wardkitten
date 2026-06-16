@@ -41,10 +41,20 @@ señal no llega dentro de la tolerancia configurada, Wardkitten **te avisa**.
 ## Desarrollo
 
 ```bash
-docker compose up -d          # levanta MongoDB local
+# Solo Mongo (para depurar la API/Worker desde el IDE):
+docker compose up -d
 dotnet build wardkitten.slnx
 dotnet test
-dotnet run --project src/Wardkitten.Api
+dotnet run --project src/Wardkitten.Api      # API en http://localhost:5080
+
+# O todo el stack en contenedores (Mongo + API + Worker + Web):
+docker compose --profile app up --build      # Web en http://localhost:8080, API en :5080
+```
+
+Sin Docker puedes validar el bucle completo contra un Mongo real embebido:
+
+```bash
+dotnet test test/Wardkitten.IntegrationTests/Wardkitten.IntegrationTests.csproj
 ```
 
 Ver `AGENTS.md` (convenciones), `SECURITY.md` (seguridad) y `docs/` (features y arquitectura).

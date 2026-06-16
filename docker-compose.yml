@@ -1,20 +1,22 @@
-# Entorno de desarrollo local: MongoDB (replica set para soportar transacciones y change streams)
-# + mongo-express para inspección. No usar en producción.
+# Entorno local. Dos modos:
+#   docker compose up -d                    -> solo MongoDB (+ mongo-express) para `dotnet run` en host
+#   docker compose --profile app up --build -> stack completo: Mongo + API + Worker + Web
+#
+# Wardkitten no usa transacciones ni change streams: un Mongo standalone es suficiente en dev.
 services:
   mongo:
     image: mongo:7
     container_name: wardkitten-mongo
-    command: ["--replSet", "rs0", "--bind_ip_all"]
     ports:
       - "27017:27017"
     volumes:
       - wardkitten-mongo-data:/data/db
     healthcheck:
-      test: echo 'try{rs.status().ok}catch(e){rs.initiate({_id:"rs0",members:[{_id:0,host:"localhost:27017"}]}).ok}' | mongosh --quiet
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
       interval: 10s
       timeout: 10s
       retries: 10
-      start_period: 20s
+      start_period: 15s
 
   mongo-express:
     image: mongo-express:1.0.2
@@ -23,11 +25,60 @@ services:
     ports:
       - "8081:8081"
     environment:
-      ME_CONFIG_MONGODB_URL: "mongodb://localhost:27017/?replicaSet=rs0"
+      ME_CONFIG_MONGODB_URL: "mongodb://mongo:27017/"
       ME_CONFIG_BASICAUTH: "false"
     depends_on:
       mongo:
         condition: service_healthy
+
+  api:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: src/Wardkitten.Api/Dockerfile
+    container_name: wardkitten-api
+    ports:
+      - "5080:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      MONGOSETTINGS_CONNECTION: "mongodb://mongo:27017"
+      MONGOSETTINGS_DATABASENAME: "Wardkitten"
+      PUBLIC_BASE_URL: "http://localhost:8080"
+      CORS_ORIGINS: "http://localhost:8080"
+      JWT_SECRET: "dev-insecure-secret-change-me-please-0123456789"
+      MAGICLINK_SECRET: "dev-insecure-magiclink-secret-0123456789"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  worker:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: src/Wardkitten.Worker/Dockerfile
+    container_name: wardkitten-worker
+    environment:
+      MONGOSETTINGS_CONNECTION: "mongodb://mongo:27017"
+      MONGOSETTINGS_DATABASENAME: "Wardkitten"
+      PUBLIC_BASE_URL: "http://localhost:8080"
+      MAGICLINK_SECRET: "dev-insecure-magiclink-secret-0123456789"
+      POLLING_INTERVAL_SECONDS: "15"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  web:
+    profiles: ["app"]
+    build:
+      context: .
+      dockerfile: src/Wardkitten.Web/Dockerfile
+    container_name: wardkitten-web
+    ports:
+      - "8080:80"
+    environment:
+      API_BASE_URL: "http://localhost:5080"
+    depends_on:
+      - api
 
 volumes:
   wardkitten-mongo-data:

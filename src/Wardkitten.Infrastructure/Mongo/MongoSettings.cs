@@ -6,6 +6,7 @@ namespace Wardkitten.Infrastructure.Mongo;
 /// </summary>
 public sealed class MongoSettings
 {
-    public string Connection { get; set; } = "mongodb://localhost:27017/?replicaSet=rs0";
+    // Standalone por defecto (dev). En producción se inyecta la URI real (puede ser replica set).
+    public string Connection { get; set; } = "mongodb://localhost:27017";
     public string DatabaseName { get; set; } = "Wardkitten";
 }
