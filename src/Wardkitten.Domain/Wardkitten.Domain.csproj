@@ -4,4 +4,9 @@
     <RootNamespace>Wardkitten.Domain</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- Parser de expresiones cron (lógica de scheduling pura, sin infraestructura). -->
+    <PackageReference Include="NCrontab" Version="3.3.3" />
+  </ItemGroup>
+
 </Project>
