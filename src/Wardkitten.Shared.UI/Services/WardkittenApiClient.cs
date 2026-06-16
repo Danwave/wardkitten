@@ -44,6 +44,12 @@ public sealed class WardkittenApiClient
     public Task<ApiResult<CheckoutResponse>> SubscribeAsync(string plan) => PostAsync<CheckoutResponse>("/api/billing/subscribe", new SubscribeRequest(plan));
     public Task<ApiResult<CheckoutResponse>> BillingPortalAsync() => PostAsync<CheckoutResponse>("/api/billing/portal", new { });
 
+    // ---- Status pages ----
+    public Task<ApiResult<List<StatusPageDto>>> GetStatusPagesAsync() => GetAsync<List<StatusPageDto>>("/api/status-pages");
+    public Task<ApiResult<StatusPageDto>> CreateStatusPageAsync(StatusPageRequest req) => PostAsync<StatusPageDto>("/api/status-pages", req);
+    public Task<ApiResult> DeleteStatusPageAsync(string id) => DeleteAsync($"/api/status-pages/{id}");
+    public Task<ApiResult<PublicStatusPageDto>> GetPublicStatusAsync(string slug) => GetAsync<PublicStatusPageDto>($"/s/{slug}");
+
     // ---- Incidents ----
     public Task<ApiResult<List<IncidentDto>>> GetIncidentsAsync() => GetAsync<List<IncidentDto>>("/api/incidents");
     public Task<ApiResult> AckIncidentAsync(string id) => PostAsync($"/api/incidents/{id}/ack", new { });

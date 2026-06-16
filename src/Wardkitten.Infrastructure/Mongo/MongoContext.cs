@@ -6,6 +6,7 @@ using Wardkitten.Domain.Identity;
 using Wardkitten.Domain.Incidents;
 using Wardkitten.Domain.Leasing;
 using Wardkitten.Domain.Notifications;
+using Wardkitten.Domain.StatusPages;
 using Wardkitten.Domain.Watches;
 
 namespace Wardkitten.Infrastructure.Mongo;
@@ -34,6 +35,7 @@ public sealed class MongoContext
     public IMongoCollection<CreditTransaction> CreditTransactions => Database.GetCollection<CreditTransaction>(CollectionNames.CreditTransactions);
     public IMongoCollection<ChannelRate> ChannelRates => Database.GetCollection<ChannelRate>(CollectionNames.ChannelRates);
     public IMongoCollection<NotificationLog> NotificationLogs => Database.GetCollection<NotificationLog>(CollectionNames.NotificationLogs);
+    public IMongoCollection<StatusPage> StatusPages => Database.GetCollection<StatusPage>(CollectionNames.StatusPages);
     public IMongoCollection<Lease> Leases => Database.GetCollection<Lease>(CollectionNames.Leases);
 
     public async Task InitializeAsync(CancellationToken ct = default)
@@ -130,6 +132,14 @@ public sealed class MongoContext
         await NotificationLogs.Indexes.CreateOneAsync(new CreateIndexModel<NotificationLog>(
             Builders<NotificationLog>.IndexKeys.Ascending(n => n.UserId).Descending(n => n.SentAtUtc),
             new CreateIndexOptions { Name = "ix_notiflog_user" }), cancellationToken: ct);
+
+        await StatusPages.Indexes.CreateManyAsync(new[]
+        {
+            new CreateIndexModel<StatusPage>(Builders<StatusPage>.IndexKeys.Ascending(s => s.Slug),
+                new CreateIndexOptions { Unique = true, Name = "ux_statuspage_slug" }),
+            new CreateIndexModel<StatusPage>(Builders<StatusPage>.IndexKeys.Ascending(s => s.UserId),
+                new CreateIndexOptions { Name = "ix_statuspage_user" }),
+        }, ct);
 
         await Leases.Indexes.CreateOneAsync(new CreateIndexModel<Lease>(
             Builders<Lease>.IndexKeys.Ascending(l => l.ExpiresAtUtc),

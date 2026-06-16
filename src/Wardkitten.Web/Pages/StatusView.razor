@@ -1,0 +1,55 @@
+@page "/status/{Slug}"
+@inject WardkittenApiClient Api
+
+<PageTitle>@(_page?.Title ?? "Estado") · Wardkitten</PageTitle>
+
+@if (_loading)
+{
+    <p>Cargando…</p>
+}
+else if (_page is null)
+{
+    <div class="text-center py-5 text-muted"><div style="font-size:48px">🐾</div><p>Página de estado no encontrada.</p></div>
+}
+else
+{
+    <h1 class="h3 mb-3">@_page.Title</h1>
+    <table class="table">
+        <thead><tr><th>Tarea</th><th>Estado</th><th>Último check-in</th></tr></thead>
+        <tbody>
+            @foreach (var item in _page.Items)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td><span class="badge @CssFor(item.Status)">@TextFor(item.Status)</span></td>
+                    <td>@(item.LastCheckInAtUtc?.ToLocalTime().ToString("dd/MM HH:mm") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter] public string Slug { get; set; } = string.Empty;
+    private PublicStatusPageDto? _page;
+    private bool _loading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var r = await Api.GetPublicStatusAsync(Slug);
+        if (r.Ok) _page = r.Value;
+        _loading = false;
+    }
+
+    private static string CssFor(string status) => status switch
+    {
+        "Up" => "bg-success", "Grace" => "bg-warning text-dark", "Down" => "bg-danger",
+        "Paused" => "bg-secondary", _ => "bg-info text-dark",
+    };
+
+    private static string TextFor(string status) => status switch
+    {
+        "Up" => "Al día", "Grace" => "En gracia", "Down" => "¡Incumplido!",
+        "Paused" => "Pausado", "New" => "Nuevo", _ => status,
+    };
+}
