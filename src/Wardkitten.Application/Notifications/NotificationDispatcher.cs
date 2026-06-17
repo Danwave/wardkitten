@@ -67,8 +67,9 @@ public sealed class NotificationDispatcher : INotificationDispatcher
             // ¿Ya entregado/fallado definitivamente?
             if (incident.HasDispatched(binding.ChannelType, step)) continue;
 
-            // Quiet hours: se pospone (se reintenta en un tick posterior).
-            if (binding.QuietHours?.IsQuiet(localNow) == true)
+            // Quiet hours: se pospone (se reintenta en un tick posterior). Los grados de criticidad altos
+            // se saltan el silencio para que una urgencia siempre avise (ver CriticalityCatalog).
+            if (binding.QuietHours?.IsQuiet(localNow) == true && !CriticalityCatalog.For(watch.Severity).BypassQuietHours)
             {
                 MarkSkippedOnce(incident, binding.ChannelType, step, "quiet hours");
                 continue;

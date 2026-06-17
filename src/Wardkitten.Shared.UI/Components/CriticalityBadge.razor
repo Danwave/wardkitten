@@ -1,0 +1,9 @@
+@using Wardkitten.Domain.Watches
+
+<span class="badge" style="@($"background-color:{Policy.Color};color:#fff")" title="Criticidad">@Policy.Label</span>
+
+@code {
+    [Parameter] public Severity Severity { get; set; }
+
+    private CriticalityPolicy Policy => CriticalityCatalog.For(Severity);
+}
