@@ -37,6 +37,7 @@ señal no llega dentro de la tolerancia configurada, Wardkitten **te avisa**.
 | Pagos | Stripe |
 | Canales | MailKit (Email), Telegram Bot, FCM (Push), Twilio (SMS/WhatsApp) |
 | Despliegue | Docker + Kubernetes + ArgoCD |
+| Interfaz MCP | `/mcp` (Model Context Protocol, protegido por JWT) — **protocolo, no IA**; ver [docs/features/F14-mcp](docs/features/F14-mcp/overview.md) |
 
 ## Desarrollo
 

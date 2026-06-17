@@ -3,6 +3,7 @@ using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Wardkitten.Api.Endpoints;
+using Wardkitten.Api.Mcp;
 using Wardkitten.Api.RealTime;
 using Wardkitten.Application.DependencyInjection;
 using Wardkitten.Application.RealTime;
@@ -68,6 +69,11 @@ builder.Services.AddRateLimiter(options =>
 
 builder.Services.AddOpenApi();
 
+// MCP (Model Context Protocol): interfaz/protocolo —NO IA— para que un agente externo opere Wardkitten
+// en el futuro. Las herramientas viven en WardkittenMcpTools y resuelven el usuario del JWT.
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddMcpServer().WithHttpTransport().WithTools<WardkittenMcpTools>();
+
 var app = builder.Build();
 
 // Crea índices y la colección time-series (idempotente). No tumbar el arranque si Mongo no responde aún.
@@ -107,6 +113,9 @@ app.MapMoneyEndpoints();
 app.MapPublicEndpoints();
 app.MapInternalEndpoints();
 app.MapHub<WatchHub>("/hubs/watch");
+
+// Endpoint MCP (Streamable HTTP), protegido por JWT (ver SECURITY.md). Feature: F14.
+app.MapMcp("/mcp").RequireAuthorization();
 
 app.Run();
 

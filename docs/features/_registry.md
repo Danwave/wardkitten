@@ -30,6 +30,7 @@ Tabla maestra de funcionalidades. Cada una tiene su código `FXX.YY` y, si proce
 | F12.02 | Guardias on-call (rotación por turnos + overrides) | implementada | — |
 | F12.03 | Escalado de incidente a la persona de guardia | implementada | — |
 | F13.01 | Grados de criticidad funcionales (alta/crítica saltan quiet-hours) | implementada | — |
+| F14.01 | Endpoints MCP (protocolo, NO IA) para agentes externos | implementada | [F14-mcp](F14-mcp/overview.md) |
 | F11.01 | Crear tareas con lenguaje natural (**sin IA**, parser determinista) | planificada (futuro) | — |
 
 > **Decisión de proyecto:** Wardkitten no incorpora funcionalidades de IA (ver `ToDo.md` → Decisiones de proyecto y `AGENTS.md`). La feature F11.01 es a futuro y deberá implementarse sin LLM.
