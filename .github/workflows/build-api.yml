@@ -19,7 +19,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
       - uses: actions/checkout@v4
@@ -39,3 +39,19 @@ jobs:
           tags: |
             ghcr.io/nimitaco/wardkitten:${{ github.run_number }}
             ghcr.io/nimitaco/wardkitten:latest
+
+      - name: Fijar imagen API en el manifiesto y desplegar (ArgoCD)
+        run: |
+          set -euo pipefail
+          tag="${{ github.run_number }}"
+          file="K8S/produccion/wardkitten.yaml"
+          sed -i -E "s#^([[:space:]]*image: ghcr\.io/nimitaco/wardkitten:).*#\1${tag}#" "$file"
+          if git diff --quiet -- "$file"; then
+            echo "El manifiesto ya apunta a :${tag}; nada que commitear."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$file"
+          git commit -m "K8S deploy wardkitten:${tag} [skip ci]"
+          git push origin HEAD:${{ github.ref_name }}
