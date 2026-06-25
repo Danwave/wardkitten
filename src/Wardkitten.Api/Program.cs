@@ -10,6 +10,10 @@ using Wardkitten.Application.RealTime;
 using Wardkitten.Infrastructure.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Escuchar en el puerto 80 en todos los entornos (depuración y producción), igual que IntegraSystem.
+builder.WebHost.UseUrls("http://0.0.0.0:80");
+
 var config = builder.Configuration;
 
 // ---- Capas ----
