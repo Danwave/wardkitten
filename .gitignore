@@ -44,6 +44,10 @@ npm-debug.log
 yarn-error.log
 wwwroot/dist/
 
+## Excepción: Bootstrap vendorizado (su ruta estándar contiene "dist/", atrapado por la regla de arriba)
+!src/Wardkitten.Web/wwwroot/lib/bootstrap/dist/
+!src/Wardkitten.Web/wwwroot/lib/bootstrap/dist/**
+
 ## Secrets & local config (NUNCA versionar — ver SECURITY.md)
 appsettings.*.local.json
 appsettings.Secrets.json
