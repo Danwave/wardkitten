@@ -34,6 +34,8 @@ test/Wardkitten.Tests           # unit + integration
 
 ## Publicar nueva versión (K8S deploy)
 
+> **⚠️ Sincronización de manifiestos K8S (temporal, hasta nueva orden):** los YAML de `K8S/` (`produccion/` y `preproduccion/`) deben mantenerse **a la vez** en este repo **y** en el repo de infraestructura (`Avanware/infra/Clusters/C/misc/wardkitten/wardkitten.yaml`). Temporalmente es **infra** quien los publica (ArgoCD app `infra`, sync recursivo de `Clusters/C/`); todo cambio en un manifiesto de `K8S/` hay que replicarlo en su copia de infra o no se desplegará.
+
 La imagen Docker se etiqueta con el número de build del workflow de CI. `wardkitten` y
 `wardkitten-worker` tienen numeraciones independientes. **La imagen `wardkitten` empaqueta y sirve
 también el Blazor WASM** (un solo despliegue; no hay imagen `wardkitten-web` separada).

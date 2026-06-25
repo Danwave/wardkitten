@@ -8,6 +8,8 @@ canales Email/Telegram/Push (gratis) y SMS/WhatsApp (de pago, vía wallet de cr�
 
 ## Publicar nueva versión (K8S deploy)
 
+> **⚠️ Sincronización de manifiestos K8S (temporal, hasta nueva orden):** los YAML de `K8S/` deben mantenerse **a la vez** en este repo **y** en el repo de infraestructura (`Avanware/infra/Clusters/C/misc/wardkitten/wardkitten.yaml`). Temporalmente es **infra** quien los publica (ArgoCD app `infra`, sync recursivo de `Clusters/C/`); todo cambio en un manifiesto de `K8S/` hay que replicarlo en su copia de infra o no se desplegará.
+
 > La **web (Blazor WASM) la sirve la propia API** (un solo despliegue): la imagen `wardkitten`
 > empaqueta el WASM y lo sirve same-origin. No hay imagen `wardkitten-web` separada.
 
