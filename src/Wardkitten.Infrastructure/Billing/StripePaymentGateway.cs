@@ -43,6 +43,7 @@ public sealed class StripePaymentGateway : IPaymentGateway
             CancelUrl = cancelUrl,
             Metadata = new Dictionary<string, string> { ["userId"] = user.Id, ["plan"] = plan.ToString(), ["kind"] = "subscription" },
         };
+        ApplyAutomaticTax(options, user);
 
         var session = await new SessionService().CreateAsync(options, cancellationToken: ct);
         return session.Url;
@@ -57,19 +58,7 @@ public sealed class StripePaymentGateway : IPaymentGateway
             ClientReferenceId = user.Id,
             Customer = user.StripeCustomerId,
             CustomerEmail = user.StripeCustomerId is null ? user.Email : null,
-            LineItems = new List<SessionLineItemOptions>
-            {
-                new()
-                {
-                    Quantity = quantity,
-                    PriceData = new SessionLineItemPriceDataOptions
-                    {
-                        Currency = _options.CreditCurrency,
-                        UnitAmount = _options.CreditUnitAmountCents,
-                        ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Créditos Wardkitten" },
-                    },
-                },
-            },
+            LineItems = new List<SessionLineItemOptions> { BuildCreditLineItem(quantity) },
             SuccessUrl = successUrl,
             CancelUrl = cancelUrl,
             Metadata = new Dictionary<string, string>
@@ -79,9 +68,41 @@ public sealed class StripePaymentGateway : IPaymentGateway
                 ["kind"] = "credit-topup",
             },
         };
+        ApplyAutomaticTax(options, user);
 
         var session = await new SessionService().CreateAsync(options, cancellationToken: ct);
         return session.Url;
+    }
+
+    /// <summary>
+    /// Line item de créditos: usa el precio real de Stripe (<c>PriceCredit</c>) si está configurado —para que
+    /// aplique su tax code e IVA incluido—; si no, cae a un precio dinámico. La cantidad = créditos del lote.
+    /// </summary>
+    private SessionLineItemOptions BuildCreditLineItem(long quantity)
+        => string.IsNullOrWhiteSpace(_options.PriceCredit)
+            ? new SessionLineItemOptions
+            {
+                Quantity = quantity,
+                PriceData = new SessionLineItemPriceDataOptions
+                {
+                    Currency = _options.CreditCurrency,
+                    UnitAmount = _options.CreditUnitAmountCents,
+                    TaxBehavior = _options.CreditTaxBehavior,
+                    ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Créditos Wardkitten" },
+                },
+            }
+            : new SessionLineItemOptions { Price = _options.PriceCredit, Quantity = quantity };
+
+    /// <summary>
+    /// Activa Stripe Tax en el checkout si está habilitado. Con un customer existente, exige
+    /// <c>customer_update.address=auto</c> para poder recalcular impuestos con la dirección recogida.
+    /// </summary>
+    private void ApplyAutomaticTax(SessionCreateOptions options, User user)
+    {
+        if (!_options.AutomaticTaxEnabled) return;
+        options.AutomaticTax = new SessionAutomaticTaxOptions { Enabled = true };
+        if (!string.IsNullOrEmpty(user.StripeCustomerId))
+            options.CustomerUpdate = new SessionCustomerUpdateOptions { Address = "auto" };
     }
 
     public async Task<string> CreateBillingPortalAsync(User user, string returnUrl, CancellationToken ct = default)

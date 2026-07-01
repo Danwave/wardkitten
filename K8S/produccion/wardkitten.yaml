@@ -22,6 +22,12 @@ data:
   SMTP_PORT: "587"
   SMTP_FROM: "noreply@wardkitten.com"
   SMTP_FROM_NAME: "Wardkitten"
+  # Stripe: los price IDs NO son secretos (van en cliente). Solo SECRET_KEY/WEBHOOK_SECRET son sensibles.
+  STRIPE_PRICE_PRO: "price_1ToKobBwCubRzMH5DFj5JG5a"
+  STRIPE_PRICE_TEAM: "price_1ToKpRBwCubRzMH53YcJwKit"
+  STRIPE_PRICE_CREDIT: "price_1ToKpmBwCubRzMH5LCxQCk0k"
+  STRIPE_CREDIT_CENTS: "100"
+  STRIPE_AUTOMATIC_TAX: "false"   # -> "true" cuando Stripe Tax esté configurado en el dashboard
 
 ---
 # PLACEHOLDERS: los valores reales se aplican fuera de git (ver SECURITY.md). No commitear secretos.
@@ -47,8 +53,6 @@ stringData:
   TWILIO_WHATSAPP_FROM: ""
   STRIPE_SECRET_KEY: ""
   STRIPE_WEBHOOK_SECRET: ""
-  STRIPE_PRICE_PRO: ""
-  STRIPE_PRICE_TEAM: ""
 
 ---
 apiVersion: apps/v1

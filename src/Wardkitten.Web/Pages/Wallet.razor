@@ -2,6 +2,7 @@
 @attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @inject WardkittenApiClient Api
 @inject NavigationManager Nav
+@using Wardkitten.Domain.Billing
 
 <PageTitle>Créditos · Wardkitten</PageTitle>
 
@@ -20,7 +21,12 @@
                         <div class="alert alert-warning py-2 mt-2">Saldo bajo: SMS y WhatsApp pueden desactivarse.</div>
                     }
                     <div class="input-group mt-3">
-                        <input type="number" min="1" class="form-control" @bind="_topUp" />
+                        <select class="form-select" @bind="_topUp">
+                            @foreach (var lot in CreditLots.Sizes)
+                            {
+                                <option value="@lot">@lot créditos</option>
+                            }
+                        </select>
                         <button class="btn btn-primary" @onclick="TopUpAsync" disabled="@_busy">Recargar</button>
                     </div>
                     <small class="text-muted">Los créditos pagan SMS/WhatsApp, independientemente de tu plan.</small>

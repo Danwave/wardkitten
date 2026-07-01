@@ -42,7 +42,8 @@ public sealed class BillingService
     {
         var user = await _users.GetByIdAsync(userId, ct);
         if (user is null) return Result<string>.Fail("Usuario no encontrado.");
-        if (credits <= 0) return Result<string>.Fail("La cantidad de créditos debe ser positiva.");
+        if (!CreditLots.IsValid(credits))
+            return Result<string>.Fail($"Lote de créditos no válido. Opciones: {string.Join(", ", CreditLots.Sizes)}.");
         var url = await _gateway.CreateCreditTopUpCheckoutAsync(user, credits, successUrl, cancelUrl, ct);
         return Result<string>.Ok(url);
     }

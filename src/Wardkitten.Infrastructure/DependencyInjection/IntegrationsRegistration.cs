@@ -75,8 +75,11 @@ public static class IntegrationsRegistration
             o.WebhookSecret = config["STRIPE_WEBHOOK_SECRET"] ?? string.Empty;
             o.PriceProMonthly = config["STRIPE_PRICE_PRO"] ?? string.Empty;
             o.PriceTeamMonthly = config["STRIPE_PRICE_TEAM"] ?? string.Empty;
+            o.PriceCredit = config["STRIPE_PRICE_CREDIT"] ?? string.Empty;
             o.CreditUnitAmountCents = ParseInt(config["STRIPE_CREDIT_CENTS"], 100);
             o.CreditCurrency = config["STRIPE_CREDIT_CURRENCY"] ?? "eur";
+            o.CreditTaxBehavior = config["STRIPE_CREDIT_TAX_BEHAVIOR"] ?? "inclusive";
+            o.AutomaticTaxEnabled = ParseBool(config["STRIPE_AUTOMATIC_TAX"], false);
         });
         services.AddSingleton<IPaymentGateway, StripePaymentGateway>();
         services.AddSingleton<StripeWebhookProcessor>();
@@ -86,4 +89,7 @@ public static class IntegrationsRegistration
 
     private static int ParseInt(string? value, int fallback)
         => int.TryParse(value, out var n) ? n : fallback;
+
+    private static bool ParseBool(string? value, bool fallback)
+        => bool.TryParse(value, out var b) ? b : fallback;
 }
