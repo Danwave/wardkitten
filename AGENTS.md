@@ -127,3 +127,7 @@ Añade `// Feature: FXX.YY` en la cabecera del archivo que implementa una featur
 
 Sigue `DOCUMENTATION-DIRECTIVES.md`. Cada feature tiene código `FXX.YY` y ficha en `docs/features/`.
 No asumas la intención de negocio a partir del código: pregunta al desarrollador.
+
+## Bloqueos de MongoDB (CPU alta / COLLSCAN)
+
+Ante saturación de MongoDB (CPU de `mongod` al 100%, timeouts `MaxTimeMSExpired`, `COLLSCAN` en el log del primario del replica set), sigue el runbook de auditoría y arreglo: [`RUNBOOK-Auditoria-Bloqueos-MongoDB.md`](RUNBOOK-Auditoria-Bloqueos-MongoDB.md).
